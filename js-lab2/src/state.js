@@ -6,5 +6,15 @@
 //   setState(next) or setState((prev) => next) stores the new state and calls render(),
 //   unless the new state is the SAME value (Object.is), in which case nothing happens.
 export function useState(initial, onChange) {
-  throw new Error("TODO — from JS Lab 1 §15: run npm run carry -- ../js-lab1 (section 01 of the doc)");
+  let value = initial;
+  return [
+    () => value,
+    (next) => {
+      const newValue = typeof next === "function" ? next(value) : next;
+      if (!Object.is(newValue, value)) {
+        value = newValue;
+        onChange();
+      }
+    }
+  ];
 }

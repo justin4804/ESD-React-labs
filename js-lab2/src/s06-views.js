@@ -11,7 +11,15 @@
 //   buttonLabel  "Remove" if in the planner, otherwise "Add"
 //   disabled     true only for a FULL course that is NOT in the planner
 export function cardView(course, planner) {
-  throw new Error("TODO");
+  return {
+    id: course.id,
+    heading: `${course.code} · ${course.title}`,
+    meta: `${course.credits} credits · ${course.department}`,
+    seats: course.seatsLeft === 0 ? "Full" : course.seatsLeft === 1 ? "1 seat left" : `${course.seatsLeft} seats left`,
+    inPlanner: planner.some(c => c.id === course.id),
+    buttonLabel: planner.some(c => c.id === course.id) ? "Remove" : "Add",
+    disabled: course.seatsLeft === 0 && !planner.some(c => c.id === course.id)
+  };
 }
 
 // The planner summary.
@@ -19,7 +27,12 @@ export function cardView(course, planner) {
 //   text: "Nothing planned yet" | "1 course · 4 credits" | "3 courses · 10 credits"
 //   overLimit: credits > 24
 export function summaryView(planner) {
-  throw new Error("TODO");
+  return {
+    count: planner.length,
+    credits: planner.reduce((sum, c) => sum + c.credits, 0),
+    overLimit: planner.reduce((sum, c) => sum + c.credits, 0) > 24,
+    text: planner.length === 0 ? "Nothing planned yet" : `${planner.length} course${planner.length > 1 ? "s" : ""} · ${planner.reduce((sum, c) => sum + c.credits, 0)} credits`
+  };
 }
 
 // The status line above the list.
@@ -29,7 +42,16 @@ export function summaryView(planner) {
 //   ready with no courses → "No courses match."
 //   anything else → ""  (showRetry false except for errors)
 export function statusView(state) {
-  throw new Error("TODO");
+  switch (state.status) {
+    case "loading":
+      return { message: "Loading courses…", showRetry: false };
+    case "error":
+      return { message: `Couldn't load courses: ${state.error}`, showRetry: true };
+    case "ready":
+      return state.courses.length === 0 ? { message: "No courses match.", showRetry: false } : { message: "", showRetry: false };
+    default:
+      return { message: "", showRetry: false };
+  }
 }
 
 // The SGPA calculator.
@@ -48,5 +70,26 @@ export const GRADE_POINTS = Object.freeze({ A: 10, "A-": 9, B: 8, "B-": 7, C: 6,
 //            "SGPA 8.40"                                   (all graded)
 //   (sgpa in text always shows 2 decimals: 9 → "9.00")
 export function sgpaView(planner, grades) {
-  throw new Error("TODO");
+  const gradedCourses = planner.filter(c => grades[c.id] && GRADE_POINTS[grades[c.id]] !== undefined);
+  const graded = gradedCourses.length;
+  const total = planner.length;
+  const credits = gradedCourses.reduce((sum, c) => sum + c.credits, 0);
+  let sgpa = credits > 0 ? (gradedCourses.reduce((sum, c) => sum + c.credits * GRADE_POINTS[grades[c.id]], 0) / credits).toFixed(2) : null;
+  let text;
+
+  if (total === 0) {
+    text = "Add courses to the planner first";
+  } else if (graded === 0) {
+    text = "Pick a grade to see your SGPA";
+  } else if (graded < total) {
+    text = `SGPA ${sgpa} · ${graded} of ${total} courses graded`;
+  } else {
+    text = `SGPA ${sgpa}`;
+  }
+
+  if(sgpa !== null) {
+    sgpa = parseFloat(sgpa); // convert back to number for consistency
+  }
+
+  return { graded, total, credits, sgpa, text };
 }
