@@ -12,7 +12,7 @@ export class PlannerList {
     this.ids = [];
   }
 
-  add(id) {
+  add = (id) => {
     this.ids.push(id);
   }
 

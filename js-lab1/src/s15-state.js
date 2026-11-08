@@ -8,5 +8,15 @@
 //   redraws the screen.
 // - If the new value is the same (Object.is), it does nothing: no onChange.
 export function useState(initial, onChange) {
-  throw new Error("TODO");
+  let value = initial;
+  return [
+    () => value,
+    (next) => {
+      const newValue = typeof next === "function" ? next(value) : next;
+      if (!Object.is(newValue, value)) {
+        value = newValue;
+        onChange();
+      }
+    }
+  ];
 }
