@@ -30,7 +30,12 @@ export function incrementAt(matrix, row, col) {
 //   stats([[1, 0], [3, 4]])  →  { sum: 8, average: 2, max: 4, nonZero: 3 }
 // average = sum ÷ the number of cells. An empty matrix, [], gives 0 for all four.
 export function stats(matrix) {
-  throw new Error("TODO");
+  const flatMat = matrix.flat();
+  const sum = flatMat.reduce((sum, val)=> sum + val, 0);
+  const average = flatMat.length > 0 ? sum / flatMat.length : 0;
+  const max = flatMat.length > 0 ? Math.max(...flatMat) : 0;
+  const nonZero = flatMat.filter((val) => val !== 0).length;
+  return { sum, average, max, nonZero };
 }
 
 // Section 12 (stretch) — the same shape, every cell 0.
