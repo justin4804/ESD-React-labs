@@ -5,6 +5,7 @@ import Header from "./Header.jsx";
 import Matrix from "./Matrix.jsx";
 import Stats from "./Stats.jsx";
 import { START, incrementAt, decrementAt, zeros } from "./matrix.js";
+import Cell from "./Cell.jsx";
 
 export default function App() {
   // Section 07: hold the matrix in state, starting from START, and render
@@ -16,6 +17,7 @@ export default function App() {
   return (
     <main className="app">
       <Header />
+      <Cell row={0} col={1} value={5} onClick={() => console.log("clicked")} />
     </main>
   );
 }
