@@ -17,7 +17,7 @@ export default function App() {
   return (
     <main className="app">
       <Header />
-      <Cell row={0} col={1} value={5} onClick={() => console.log("clicked")} />
+      <Matrix matrix={[[1, 2, 3], [4, 5, 6]]} />
     </main>
   );
 }
