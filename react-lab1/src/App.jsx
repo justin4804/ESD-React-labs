@@ -15,7 +15,13 @@ export default function App() {
   // Section 09: render <Stats matrix={…} /> NEXT TO the matrix, not inside it.
   // Section 11: load /matrix.json once, in a useEffect, and put it in the state.
 
-   const [matrix, setMatrix] = useState(START);
+  const [matrix, setMatrix] = useState(START);
+
+  useEffect(() => {
+    fetch("/matrix.json")
+      .then((res) => res.json())
+      .then((data) => setMatrix(data));
+  }, []);
 
   function increment(row, col) {
     setMatrix((prev) => incrementAt(prev, row, col));
