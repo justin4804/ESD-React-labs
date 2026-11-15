@@ -17,6 +17,8 @@ export default function App() {
 
   const [matrix, setMatrix] = useState(START);
 
+  const [step, setStep] = useState(1);
+
   useEffect(() => {
     fetch("/matrix.json")
       .then((res) => res.json())
@@ -24,13 +26,19 @@ export default function App() {
   }, []);
 
   function increment(row, col) {
-    setMatrix((prev) => incrementAt(prev, row, col));
+    setMatrix((prev) => incrementAt(prev, row, col, step));
   }
 
   return (
     <main className="app">
       <Header />
       <div className="board">
+        <label>
+          Step{" "}
+          <input type="number" min="1" value={step}
+            onChange={(event) => setStep(Number(event.target.value))} />
+        </label>
+        <button onClick={() => setMatrix(zeros(matrix))}>Reset</button>
         <Matrix matrix={matrix} onIncrement={increment} />
         <Stats matrix={matrix} />
       </div>
